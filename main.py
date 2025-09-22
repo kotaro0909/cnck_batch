@@ -1,16 +1,24 @@
-# This is a sample Python script.
+import logging
+import os
+from concurrent.futures import ThreadPoolExecutor
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import uvicorn
+from fastapi import FastAPI
+from api import api_coincheck
+from common import my_logger
+from routers.router_base import router as router_base
+from routers.router_ticker import router as router_ticker
 
+TICKER_STATE_STOP = "stopped"
+TICKER_STATE_RUN = "running"
+th1 = ThreadPoolExecutor()
+log_path = f'{os.getcwd()}\\logs'
+logger = my_logger.root_logger(log_path, level=logging.DEBUG)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+app = FastAPI()
+app.include_router(router_base)
+app.include_router(router_ticker)
 
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    uvicorn.run("main:app", port=8080, reload=True, log_level="info")
+    api_coincheck.update_State(TICKER_STATE_STOP)
