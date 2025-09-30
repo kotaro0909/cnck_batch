@@ -41,4 +41,4 @@ def ticker_run_main():
         if message == TICKER_STATE_STOP:
             break
         api_coincheck.all_tick()
-        sleep(20)
+        sleep(600)
