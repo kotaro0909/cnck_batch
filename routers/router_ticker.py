@@ -1,11 +1,13 @@
 from logging import getLogger
 from time import sleep
 from fastapi import APIRouter
+
+import routers.router_base
 from api import api_coincheck
 from concurrent.futures import ThreadPoolExecutor
 
-TICKER_STATE_STOP = "stopped"
-TICKER_STATE_RUN = "running"
+TICKER_STATE_STOP = routers.router_base.TICKER_STATE_STOP
+TICKER_STATE_RUN = routers.router_base.TICKER_STATE_RUN
 th1 = ThreadPoolExecutor()
 router = APIRouter()
 
