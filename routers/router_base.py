@@ -1,3 +1,4 @@
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
 from fastapi import APIRouter
@@ -13,3 +14,6 @@ router = APIRouter()
 def root():
     return {"message": "Hello World"}
 
+@router.post("/shutdown")
+def shutdown():
+    sys.exit()
