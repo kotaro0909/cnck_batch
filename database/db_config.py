@@ -1,9 +1,12 @@
 """
 データベース設定
 """
+from typing import Any, Generator
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session
 
 # データベース接続情報
 DB_USER = "root"
@@ -30,7 +33,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-def get_db():
+def get_db() -> Generator[Session, Any, None]:
     """
     データベースセッションを取得するジェネレーター
     FastAPI の依存性注入で使用

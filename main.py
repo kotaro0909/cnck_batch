@@ -20,5 +20,5 @@ app.include_router(router_base)
 app.include_router(router_ticker)
 
 if __name__ == '__main__':
+    api_coincheck.update_state(api_coincheck.TICKER_STATE_STOP)
     uvicorn.run("main:app", port=8080, reload=True, log_level="debug")
-    api_coincheck.update_State(TICKER_STATE_STOP)

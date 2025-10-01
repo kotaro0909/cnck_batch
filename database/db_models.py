@@ -2,8 +2,7 @@
 データベースモデル定義
 """
 from sqlalchemy import Column, Integer, String, Float, DateTime, Index
-from datetime import datetime
-from common.db_config import Base
+from database.db_config import Base
 
 
 class TickerState(Base):

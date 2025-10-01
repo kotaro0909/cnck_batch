@@ -10,6 +10,10 @@ def root_logger(output_path_log: str, level: int):
     # root loggerを取得
     logger = getLogger()
 
+    # 既にハンドラーが設定されていれば何もしない
+    if logger.hasHandlers():
+        return logger
+
     # formatterを作成
     formatter = Formatter('%(asctime)s %(name)s:%(lineno)s %(funcName)s [%(levelname)s]: %(message)s')
     # filename
