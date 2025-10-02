@@ -14,28 +14,25 @@ class TickerStateRepository:
     """Ticker 状態管理リポジトリ"""
 
     @staticmethod
-    def get_state(db: Generator[Session, Any, None], ticker_id: int = 1) -> Optional[str]:
+    def get_state(db: Session, ticker_id: int = 1) -> Optional[str]:
         """状態を取得"""
-        session = next(db)
-        state = session.query(TickerState).filter(TickerState.id == ticker_id).first()
-        db.close()
+        state = db.query(TickerState).filter(TickerState.id == ticker_id).first()
         return state.state if state else None
 
     @staticmethod
-    def update_state(db: Generator[Session, Any, None], new_state: str, ticker_id: int = 1) -> bool:
+    def update_state(db: Session, new_state: str, ticker_id: int = 1) -> bool:
         """状態を更新"""
-        session = next(db)
         try:
-            state = session.query(TickerState).filter(TickerState.id == ticker_id).first()
+            state = db.query(TickerState).filter(TickerState.id == ticker_id).first()
             if state:
                 state.state = new_state
             else:
                 state = TickerState(id=ticker_id, state=new_state)
-                session.add(state)
-            session.commit()
+                db.add(state)
+            db.commit()
             return True
         except Exception as e:
-            session.rollback()
+            db.rollback()
             raise e
 
 
@@ -43,7 +40,7 @@ class TickHistoryRepository:
     """ティック履歴リポジトリ"""
 
     @staticmethod
-    def insert(db: Generator[Session, Any, None], tick_data: dict) -> TickHistory:
+    def insert(db: Session, tick_data: dict) -> TickHistory:
         """ティックデータを挿入"""
         tick = TickHistory(
             tick_datetime=tick_data['tick_datetime'],
@@ -55,9 +52,8 @@ class TickHistoryRepository:
             low=tick_data['low'],
             volume=tick_data['volume']
         )
-        session = next(db)
-        session.add(tick)
-        session.commit()
+        db.add(tick)
+        db.commit()
         # session.refresh(tick)
         return tick
 

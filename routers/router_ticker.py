@@ -19,22 +19,22 @@ logger = getLogger(__name__)
 @router.get("/ticker/status")
 async def ticker_status(db: Session = Depends(get_db)):
     """Ticker 状態を取得"""
-    state = api_coincheck.get_state()
+    state = api_coincheck.get_state(db)
     logger.info(f"ticker status: {state}")
     return {"status": state}
 
 @router.post("/ticker/start")
 async def ticker_start(db: Session = Depends(get_db)):
     """Ticker を開始"""
-    api_coincheck.update_state(api_coincheck.TICKER_STATE_RUN)
-    th1.submit(ticker_run_main)
+    api_coincheck.update_state(db, api_coincheck.TICKER_STATE_RUN)
+    th1.submit(api_coincheck.ticker_run_main)
     logger.info("ticker start running")
     return {"message": "Ticker started"}
 
 @router.post("/ticker/stop")
 async def ticker_stop(db: Session = Depends(get_db)):
     """Ticker を停止"""
-    api_coincheck.update_state(api_coincheck.TICKER_STATE_STOP)
+    api_coincheck.update_state(db, api_coincheck.TICKER_STATE_STOP)
     logger.info("ticker stopped")
     return {"message": "Ticker stopped"}
 
@@ -45,10 +45,3 @@ async def get_history(symbol: str, limit: int = 100, db: Session = Depends(get_d
     return {"symbol": symbol, "count": len(history), "data": history}
 
 
-def ticker_run_main():
-    flag = True
-    while flag:
-        logger.info("ticker tick - start")
-        flag = api_coincheck.ticker_run()
-        logger.info("ticker tick - end")
-        sleep(15)
